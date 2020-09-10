@@ -14,7 +14,7 @@ impl Package {
 
     pub fn update(&mut self, version: &str, file: &Path) {
         if self.version != version {
-            updating(&self.name, version, file);
+            println!("Updating package {} to version {} in file {:?}", self.name, version, file);
             self.version = version.to_string();
         }
     }
@@ -90,21 +90,21 @@ pub enum Line {
 impl Line {
     pub fn enable(self, package: &str, file: &Path) -> Line {
         match self {
-            Line::Disabled(d) => Line::Enabled(d.enable()),
-            Line::Enabled(_) => {
-                println!("Warning: Package {} already enabled in file {:?}", package, file);
-                self
+            Line::Disabled(d) => {
+                println!("Enabling package {} at version {} in file {:?}", package, d.package.version, file);
+                Line::Enabled(d.enable())
             }
+            Line::Enabled(_) => self,
             _ => unreachable!()
         }
     }
     pub fn disable(self, package: &str, file: &Path) -> Line {
         match self {
-            Line::Enabled(e) => Line::Disabled(e.disable()),
-            Line::Disabled(_) => {
-                println!("Warning: Package {} already disabled in file {:?}", package, file);
-                self
+            Line::Enabled(e) => {
+                println!("Disabling  package {} at version {} in file {:?}", package, e.package.version, file);
+                Line::Disabled(e.disable())
             }
+            Line::Disabled(_) => self,
             _ => unreachable!()
         }
     }
@@ -125,8 +125,4 @@ impl fmt::Display for Line {
             Line::Ignored(i) => write!(f, "{}", i),
         }
     }
-}
-
-fn updating(package: &str, version: &str, file: &Path) {
-    println!("Updating package {} to version {} in file {:?}", package, version, file);
 }
