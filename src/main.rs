@@ -58,7 +58,7 @@ fn main() {
     let opt = Opt::from_args();
     use Opt::*;
     match opt {
-        Add { package, version, files } => {
+        Add { package, version, files, update } => {
             for f in files {
                 let mut lines = parse_file(&f);
                 let refs = get_refs(&lines, &package);
@@ -70,8 +70,10 @@ fn main() {
                         write_file(&lines, &f);
                     }
                     1 => {
-                        lines[refs[0]].update(&version, &f);
-                        write_file(&lines, &f);
+                        if update {
+                            lines[refs[0]].update(&version, &f);
+                            write_file(&lines, &f);
+                        }
                     }
                     count => error_occurs_many(count, &package, &f),
                 }
@@ -91,16 +93,18 @@ fn main() {
                 write_file(&lines, &f);
             }
         }
-        Update { package, version, files } => {
+        Update { package, version, files, add } => {
             for f in files {
                 let mut lines = parse_file(&f);
                 let refs = get_refs(&lines, &package);
                 match refs.len() {
                     0 => {
-                        adding(&package, &version, &f);
-                        let package = Package::new(&package, &version);
-                        lines.push(Line::Enabled(Enabled::new("", "", package)));
-                        write_file(&lines, &f);
+                        if add {
+                            adding(&package, &version, &f);
+                            let package = Package::new(&package, &version);
+                            lines.push(Line::Enabled(Enabled::new("", "", package)));
+                            write_file(&lines, &f);
+                        }
                     }
                     1 => {
                         lines[refs[0]].update(&version, &f);

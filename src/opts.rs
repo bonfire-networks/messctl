@@ -11,6 +11,8 @@ pub enum Opt {
         version: String,
         #[structopt(name="FILES", parse(from_os_str), required=true, min_values=1)]
         files: Vec<PathBuf>,
+        #[structopt(long = "no-update", parse(from_flag = std::ops::Not::not))]
+        update: bool,
     },
     #[structopt(alias="up")]
     Update {
@@ -20,6 +22,8 @@ pub enum Opt {
         version: String,
         #[structopt(name="FILES", parse(from_os_str), required=true, min_values=1)]
         files: Vec<PathBuf>,
+        #[structopt(long = "no-add", parse(from_flag = std::ops::Not::not))]
+        add: bool,
     },
     #[structopt(alias="del")]
     Delete {
