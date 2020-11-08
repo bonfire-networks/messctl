@@ -17,7 +17,7 @@ fn alnum_(c: char) -> bool {
     (c == '_') || c.is_ascii_lowercase() || c.is_ascii_digit()
 }
 
-fn parse_package(input: &str) -> IResult<&str, Package> {
+pub fn parse_package(input: &str) -> IResult<&str, Package> {
     let (input, package) = take_while(alnum_)(input)?;
     let (input, _) = preceded(space0, preceded(tag("="), space0))(input)?;
     let (input, value) = preceded(tag("\""), recognize(many1_count(none_of("\""))))(input)?;

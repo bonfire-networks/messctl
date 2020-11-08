@@ -1,5 +1,27 @@
 use std::fmt;
 use std::path::Path;
+use std::process::exit;
+
+#[derive(Debug)]
+pub enum FindError {
+    Missing,
+    OccursMany,
+}
+
+#[derive(Debug)]
+pub enum ChangeError {
+    AlreadyExists,
+    Missing,
+    OccursMany,
+    IO(std::io::Error),
+}
+
+impl FindError {
+    pub fn assert_missing(&self, package: &str, path: &Path) {
+        println!("Error: Package {} occurs multiple times in file {:?}", package, path);
+        exit(1);
+    }
+}
 
 #[derive(Clone, Debug)]
 pub struct Package {
@@ -98,6 +120,7 @@ impl Line {
             _ => unreachable!()
         }
     }
+
     pub fn disable(self, package: &str, file: &Path) -> Line {
         match self {
             Line::Enabled(e) => {
@@ -108,6 +131,7 @@ impl Line {
             _ => unreachable!()
         }
     }
+
     pub fn update(&mut self, version: &str, file: &Path) {
         match self {
             Line::Enabled(ref mut e) => e.update(version, file),
