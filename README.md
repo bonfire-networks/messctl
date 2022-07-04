@@ -1,7 +1,7 @@
 # messctl
 
 A little utility for automating updating
-[mess](https://github.com/commonspub/mess) deps files.
+[mess](https://github.com/bonfire-networks/mess) deps files.
 
 ## Copyright and License
 
